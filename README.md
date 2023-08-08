@@ -1,14 +1,9 @@
-# camel
-SRA number: GSC-19,143-1 
+# CAMEL
 
+The CAMEL framework is an integrated and flexible framework allowing users to seamlessly compare space weather and space science model outputs with observational data sets.  CAMEL was developed at [Community Coordinated Modeling Center](https://ccmc.gsfc.nasa.gov) at NASA GSFC. 
 
-SRA Number: GSC-19,143-1  User requested repo be created.  Mullinix, Richard E,  
-Position Detail
-Assigned Center
-GSFC 
-Building
-021 
-Room
-271 
-Business Phone
-301.286.4432 
+The CAMEL web application can be viewed at: https://ccmc.gsfc.nasa.gov/tools/CAMEL/
+
+This repository currently only includes skill score part of CAMEL and does not include the web application and user interface.
+
+Example python notebooks will soon be available.
