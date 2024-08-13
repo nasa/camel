@@ -9,7 +9,7 @@ All Other Rights Reserved.
 
 import pandas as pd
 import numpy as np
-
+from datetime import datetime,timedelta
 
 def interpolate_dataframe_to_base(frame, baseFrame, method):
 	'''
@@ -431,5 +431,50 @@ def contingencyTable(mod, obs, threshold):
 	fp = sum(eventMod)[0] - tp
 	fn = sum(eventObs)[0] - tp
 	tn = sum(eventMod + eventObs == 0)[0] 
+	df = pd.DataFrame([[tp, fp, fn, tn]], columns = ['tp', 'fp', 'fn', 'tn'])
+	return df
+
+
+def contingencyTable_with_timewindows(mod, obs, threshold, windowlength):
+	'''
+    Computes contingency table. Helper function.  Columns returned include
+    true positive, false positive, false negative, and true negative
+    
+            Parameters:
+                    modDF (pandas.DataFrame): dataframe with datatime as index
+                    obsDF (pandas.DataFrame): dataframe with datatime as index
+                    threshold: numerical value indicating a hit when exceeded
+                    windowlength: length in minutes of time intervals that the observation and modeled time 
+                           interval is divided into. Time windows do not overlap.
+                           in each time interval, at least one value exceeding the threshold indicates a hit
+                    missing data in either observation or model will result in missed hits.
+            Returns:
+                    contingency table (pandas.DataFrame): 
+    '''
+	t0m = mod.index[0]
+	t1m = mod.index[-1]
+	t0o = obs.index[0]
+	t1o = obs.index[-1]
+	t0 = min([t0m,t0o])
+	t1 = max([t1m,t1o])
+	dt = timedelta(minutes=windowlength)
+	n_dt = int((t1-t0)/dt)+1
+    
+	eventMod = np.full(n_dt,0)
+	for i in range(n_dt):
+		t0_ = t0 + i*dt
+		t1_ = t0 +(i+1)*dt
+		eventMod[i] = np.any(mod[ np.logical_and(mod.index >= t0_, mod.index < t1_) == True ] > threshold)
+
+	eventObs = np.full(n_dt,0)
+	for i in range(n_dt):
+		t0_ = t0 + i*dt
+		t1_ = t0 +(i+1)*dt
+		eventObs[i] = np.any(obs[ np.logical_and(obs.index >= t0_, obs.index < t1_) == True ] > threshold)
+
+	tp = sum(eventMod + eventObs == 2)
+	fp = sum(eventMod) - tp
+	fn = sum(eventObs) - tp
+	tn = sum(eventMod + eventObs == 0) 
 	df = pd.DataFrame([[tp, fp, fn, tn]], columns = ['tp', 'fp', 'fn', 'tn'])
 	return df
