@@ -80,7 +80,7 @@ def dBH_dt(df,compute_derivatives=False):
                         derivatives are calculated from raw DeltaB data.
         '''
         df_size = df.shape[0]
-        if "Derivative_DeltaB_East" in df.columns and "Derivative_DeltaB_North" in df.columns:
+        if "Derivative_DeltaB_East" in df.columns and "Derivative_DeltaB_North" in df.columns and not compute_derivatives:
                 # if dataframes have the time derivatives already calculated
                 df_dBE_dt = np.array(df['Derivative_DeltaB_East'])
                 df_dBN_dt = np.array(df['Derivative_DeltaB_North'])
@@ -90,13 +90,13 @@ def dBH_dt(df,compute_derivatives=False):
                 # dataframes with the raw DeltaB (magnetic perturbation) data only
                 df_timestamp = np.array(df['timestamp'])
                 df_datetimes = np.array([timestamp2datetime(timestamp) for timestamp in df_timestamp])
-                df_datetime_deltas = np.array(df.timestamp[1:df_size]) - np.array(df.timestamp[0:df_size-1])
+                df_datetime_deltas = df_datetimes[1:df_size] - df_datetimes[0:df_size-1]
                 dt_seconds = np.array([df_datetime_deltas[i].total_seconds() for i in range(df_size-1)])
                 df_dBN_dt = (np.array(df['DeltaB_North'][1:df_size]) 
                      - np.array(df['DeltaB_North'][0:df_size-1]))/dt_seconds
                 df_dBE_dt = (np.array(df['DeltaB_East'][1:df_size]) 
                      - np.array(df['DeltaB_East'][0:df_size-1]))/dt_seconds
-                df_datetimes=np.array(df.index[0:df_size-1]) + df_datetime_deltas/2
+                df_datetimes=df_datetimes[0:df_size-1] + df_datetime_deltas/2
         df_dbH_dt = pd.DataFrame(np.sqrt(df_dBN_dt*df_dBN_dt+df_dBE_dt*df_dBE_dt),
 	                         columns=['dBH_dt'], index=df_datetimes)
         return(df_dbH_dt)
