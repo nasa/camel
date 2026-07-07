@@ -1,0 +1,13 @@
+numpy
+pandas
+scipy
+plotly
+dash
+astropy
+sunpy
+requests
+urllib3
+matplotlib
+ipython
+jupyter
+kaleido
