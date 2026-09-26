@@ -496,7 +496,8 @@ def compute_peaks(dates, observed_data, predicted_data, minimum_speed, maximum_d
                     observed_data (pandas.Series): Observed values
                     predicted_data (pandas.Series): Predicted/model values
                     minimum_speed (float): Minimum peak height (speed) to qualify as an event
-                    maximum_dt (float): Maximum allowed time difference (in days) between matched peaks
+                    maximum_dt (float): Maximum absolute elapsed time difference
+                        between matched peaks, in days (including fractions).
                     
             Returns:
                     tuple:
@@ -528,7 +529,8 @@ def compute_peaks(dates, observed_data, predicted_data, minimum_speed, maximum_d
     candidate_pairs = []
     for i, obs_date in enumerate(peaks_obs_dates):
         for j, pred_date in enumerate(peaks_pred_dates):
-            dt_days = abs((pred_date - obs_date).days)
+            # Use elapsed time so fractional-day tolerances are symmetric.
+            dt_days = abs((pred_date - obs_date).total_seconds()) / 86400
             if dt_days <= maximum_dt:
                 candidate_pairs.append((i, j, dt_days))
 

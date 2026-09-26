@@ -65,6 +65,14 @@ jupyter notebook notebooks/01_api_and_preprocessing.ipynb
 
 Start with `01_api_and_preprocessing.ipynb` to create the processed example data before computing metrics and generating visualizations in the later notebooks.
 
+## Tests
+
+Run the peak-matching regression tests after installing NumPy, pandas, and SciPy:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## Citation
 
 A publication describing the current implementation is in preparation. Until that publication is available, please cite the following prior work:
